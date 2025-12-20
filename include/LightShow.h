@@ -51,11 +51,17 @@ public:
     void rainbow(uint32_t wait=DELAYVAL);
     void rainbowChase(uint32_t wait=DELAYVAL);
     void theaterChaseRainbow(uint32_t wait=CYCLEDELAY);
+    Adafruit_NeoPixel *getPixels() {
+        return pixels;
+    }
 private:
     Adafruit_NeoPixel* pixels;
     // Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-    static inline uint32_t wheel(uint8_t wheelPos) {
+    void setBrightness(uint16_t delay, bool up);
+public:
+    // The colours are a transition r - g - b - back to r.
+
+    static uint32_t wheel(uint8_t wheelPos) {
         wheelPos = 255 - wheelPos;
         if(wheelPos < 85) {
             return Adafruit_NeoPixel::Color(255 - wheelPos * 3, 0, wheelPos * 3);
@@ -67,8 +73,6 @@ private:
         wheelPos -= 170;
         return Adafruit_NeoPixel::Color(wheelPos * 3, 255 - wheelPos * 3, 0);
     }
-
-    void setBrightness(uint16_t delay, bool up);
 };
 
 #endif //PICO_LIGHTSHOW_LIGHTSHOW_H
