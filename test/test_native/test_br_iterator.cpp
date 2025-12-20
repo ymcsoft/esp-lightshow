@@ -2,7 +2,10 @@
 // Created by Yuri Moiseyenko on 2025-12-18.
 //
 
+#if !defined(ARDUINO)
 #include "include/types.h"
+#endif
+
 #include "br_iterator.h"
 #include <gtest/gtest.h>
 // uncomment line below if you plan to use GMock

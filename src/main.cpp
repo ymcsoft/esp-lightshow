@@ -52,27 +52,45 @@ static uint8_t brightness (uint8_t value) {
     return ((value / time_distr(gen))) ;
 }
 
+void taskLightshow( void *pvParameters );
+
 void setup() {
     lightShow.begin();
+    xTaskCreate(
+            taskLightshow
+            ,  "TaskLightshow"
+            ,  4096
+            ,  NULL
+            ,  1
+            ,  NULL );
 }
 
 void loop() {
-    printf("Starting loop\n");
-    lightShow.rgb(christmas, brightness);
-    delay(60*1000);
-    lightShow.glowing(christmasColor(), CYCLEDELAY, adjust);
-    delay(2000);
-    lightShow.sparkle(christmasColor(), 30, DELAY_INTERVAL);
-    delay(2000);
-    lightShow.colorWipe(randomColor);
-    delay(2000);
-    lightShow.theaterChase(christmasColor(), DELAY_INTERVAL);
-    delay(2000);
-    lightShow.rainbow();
-    delay(2000);
-    lightShow.rainbowChase();
-    delay(2000);
-    lightShow.theaterChaseRainbow(DELAY_INTERVAL);
-    delay(2000);
-    printf("Ending loop\n");
+    //nothing to execute all in tasks
+}
+
+
+void taskLightshow( void *pvParameters ) {
+    (void) pvParameters;
+
+    while(1) {
+        printf("Starting loop\n");
+        lightShow.solid(christmas, brightness);
+        vTaskDelay(60*1000);
+        lightShow.glowing(christmasColor(), CYCLEDELAY, adjust);
+        vTaskDelay(2000);
+        lightShow.sparkle(christmasColor(), 30, DELAY_INTERVAL);
+        vTaskDelay(2000);
+        lightShow.colorWipe(randomColor);
+        vTaskDelay(2000);
+        lightShow.theaterChase(christmasColor(), DELAY_INTERVAL);
+        vTaskDelay(2000);
+        lightShow.rainbow();
+        vTaskDelay(2000);
+        lightShow.rainbowChase();
+        vTaskDelay(2000);
+        lightShow.theaterChaseRainbow(DELAY_INTERVAL);
+        vTaskDelay(2000);
+        printf("Ending loop\n");
+    }
 }

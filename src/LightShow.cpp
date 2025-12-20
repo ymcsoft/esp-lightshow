@@ -23,7 +23,7 @@ void LightShow::begin() {
   pixels->begin();
 }
 
-void LightShow::rgb(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adjust_func) {
+void LightShow::solid(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adjust_func) {
     uint8_t brightness = adjust_func(BR_MAX);
     printf("Starting LightShow::rgb adjust=%d\n",brightness);
     pixels->setBrightness(brightness);

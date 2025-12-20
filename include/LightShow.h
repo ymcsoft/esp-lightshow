@@ -44,7 +44,7 @@ public:
     virtual ~LightShow();
     void begin();
     void glowing(struct PIXEL_COLOR* pixelColor, uint16_t delay, ADJUST_FUNC adjust_func);
-    void rgb(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adjust_func);
+    void solid(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adjust_func);
     void sparkle(struct PIXEL_COLOR* pixelColor, uint16_t cycles, uint32_t wait=CYCLEDELAY);
     void colorWipe(struct PIXEL_COLOR* (* COLOR_FUNC)(void), uint32_t wait=CYCLEDELAY);
     void theaterChase(struct PIXEL_COLOR* color, uint32_t wait=CYCLEDELAY);

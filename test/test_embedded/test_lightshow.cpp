@@ -116,11 +116,11 @@ TEST(LightShow, TheaterChaseRainbow) {
     }
 }
 
-TEST(LightShow, RGB) {
+TEST(LightShow, SOLID) {
     //setup LightShow instance
     LightShow ls(8, 0, NEO_RGB + NEO_KHZ800);
     ls.begin();
-    ls.rgb([]() {
+    ls.solid([]() {
         static PIXEL_COLOR color(128, 128, 128); // Grey color
         return &color;
     }, [](uint8_t value) { return value; });
