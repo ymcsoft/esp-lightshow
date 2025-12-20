@@ -1,6 +1,6 @@
 # ESP32 Christmas Light Show
 
-This project is a clone from sample Raspberry Pi Pico project that uses the Adafruit Neopixel library to create various light show effects. The project demonstrates how to control NeoPixel LEDs using the ESP32 chipset.
+This project is a port from a Sample Raspberry Pi Pico project that uses the Adafruit Neopixel library to create various light show effects. The project demonstrates how to control NeoPixel LEDs using the ESP32-C3/ESP32-C6 chipset.
 
 ## Features
 
@@ -11,8 +11,6 @@ This project is a clone from sample Raspberry Pi Pico project that uses the Adaf
 - Theater chase effect
 - Rainbow effect
 - Rainbow chase effect
-
-![Light Show Demo](lightshow.gif)
 
 ## Prerequisites
 
@@ -40,12 +38,13 @@ This project is a clone from sample Raspberry Pi Pico project that uses the Adaf
 4. Build and Upload the Code:
      Run the following command to build and upload the code to the ESP32-C6 chipset: 
     ```sh
-    pio run pio run -t upload -e esp32c6
+    pio run -t upload -e esp32c6
     ```
     Run the following command to build and upload the code to the ESP32-C3 chipset: 
     ```sh
-    pio run pio run -t upload -e esp32c3
-5. 
+    pio run -t upload -e esp32c3
+    ```
+
 ## Usage
 Once the code is uploaded to the chipset, it will start running the light show effects on the connected NeoPixel LEDs.
 ## License
