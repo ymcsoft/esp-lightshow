@@ -54,6 +54,8 @@ public:
     Adafruit_NeoPixel *getPixels() {
         return pixels;
     }
+    void clear() const;
+
 private:
     Adafruit_NeoPixel* pixels;
     // Input a value 0 to 255 to get a color value.

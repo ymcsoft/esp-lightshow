@@ -144,3 +144,8 @@ void LightShow::theaterChaseRainbow(uint32_t wait) {
         }
     }
 }
+
+void LightShow::clear() const{
+    pixels->clear();
+    pixels->show();
+}
