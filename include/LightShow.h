@@ -35,6 +35,7 @@ struct PIXEL_COLOR {
 };
 
 typedef uint8_t (*ADJUST_FUNC) (uint8_t value);
+typedef PIXEL_COLOR* (*COLOR_FUNC)(void);
 
 class LightShow {
 public:
@@ -42,18 +43,27 @@ public:
     LightShow(uint16_t numPixels, uint16_t pin, uint16_t type=NEO_GBR + NEO_KHZ800);
     virtual ~LightShow();
     void begin();
-    void glowing(struct PIXEL_COLOR* pixelColor, uint16_t delay, uint8_t* level, ADJUST_FUNC func);
+    void glowing(struct PIXEL_COLOR* pixelColor, uint16_t delay, ADJUST_FUNC adjust_func);
+    void solid(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adjust_func);
     void sparkle(struct PIXEL_COLOR* pixelColor, uint16_t cycles, uint32_t wait=CYCLEDELAY);
     void colorWipe(struct PIXEL_COLOR* (* COLOR_FUNC)(void), uint32_t wait=CYCLEDELAY);
     void theaterChase(struct PIXEL_COLOR* color, uint32_t wait=CYCLEDELAY);
     void rainbow(uint32_t wait=DELAYVAL);
     void rainbowChase(uint32_t wait=DELAYVAL);
     void theaterChaseRainbow(uint32_t wait=CYCLEDELAY);
+    Adafruit_NeoPixel *getPixels() {
+        return pixels;
+    }
+    void clear() const;
+
 private:
     Adafruit_NeoPixel* pixels;
     // Input a value 0 to 255 to get a color value.
-// The colours are a transition r - g - b - back to r.
-    static inline uint32_t wheel(uint8_t wheelPos) {
+    void setBrightness(uint16_t delay, bool up);
+public:
+    // The colours are a transition r - g - b - back to r.
+
+    static uint32_t wheel(uint8_t wheelPos) {
         wheelPos = 255 - wheelPos;
         if(wheelPos < 85) {
             return Adafruit_NeoPixel::Color(255 - wheelPos * 3, 0, wheelPos * 3);
@@ -65,8 +75,6 @@ private:
         wheelPos -= 170;
         return Adafruit_NeoPixel::Color(wheelPos * 3, 255 - wheelPos * 3, 0);
     }
-
-    void setBrightness(uint16_t delay, bool up, uint8_t* level, ADJUST_FUNC func);
 };
 
 #endif //PICO_LIGHTSHOW_LIGHTSHOW_H
