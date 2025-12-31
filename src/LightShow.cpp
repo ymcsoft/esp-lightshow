@@ -35,6 +35,15 @@ void LightShow::solid(struct PIXEL_COLOR* (* COLOR_FUNC)(void), ADJUST_FUNC adju
     pixels->show();
 }
 
+void LightShow::solid(PIXEL_COLOR *pixelColor, uint8_t brightness) {
+    pixels->setBrightness(brightness);
+    pixels->clear();
+    for(uint16_t i=0; i < pixels->numPixels(); i++) {
+        pixels->setPixelColor(i, Adafruit_NeoPixel::Color(pixelColor->r, pixelColor->g, pixelColor->b));
+    }
+    pixels->show();
+}
+
 void LightShow::glowing(struct PIXEL_COLOR *c, uint16_t d, ADJUST_FUNC adjust_func) {
     printf("Starting LightShow::glowing initial delay=%dms\n",d);
     pixels->setBrightness(BR_MAX);

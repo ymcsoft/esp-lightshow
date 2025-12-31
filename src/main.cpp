@@ -5,13 +5,18 @@
 #include <stdio.h>
 #include "LightShow.h"
 #include "thingProperties.h"
+#include <esp_system.h>
 
 #define PIN_NEO_PIXEL  0     // The ESP32C3 pin that connects to NeoPixel
 #define NUM_PIXELS     150  // The number of LEDs (pixels) on NeoPixel
 #define DELAY_INTERVAL 100
 
+#define PIN_ON_BOARD_PIXEL 8     // The ESP32C3 pin that connects to on-board NeoPixel
+#define NUM_ON_BOARD_PIXELS 1  // The number of LEDs (pixels) on-board NeoPixel
+
 PIXEL_COLOR pixelColor;
 static uint8_t level = 0;
+static const char *ESP32_C3 = "ESP32-C3";
 
 std::uniform_int_distribution<> distr(0, 255);
 std::uniform_int_distribution<> time_distr(1, 10);
@@ -32,6 +37,11 @@ PIXEL_COLOR BLUE = PIXEL_COLOR(0, 0, 255);
 PIXEL_COLOR YELLOW = PIXEL_COLOR(255, 222, 33);
 PIXEL_COLOR PUMPKIN(255, 45, 0);
 
+const uint32_t green = Adafruit_NeoPixel::Color(GREEN.r, GREEN.g, GREEN.b);
+const uint32_t red = Adafruit_NeoPixel::Color(RED.r, RED.g, RED.b);
+
+const uint8_t onBoardBr = 50;
+
 PIXEL_COLOR CHRISTMAS_COLOURS[] = {RED, GREEN, BLUE, YELLOW, PUMPKIN};
 
 PIXEL_COLOR *christmasColor() {
@@ -44,6 +54,7 @@ PIXEL_COLOR *christmas() {
 }
 
 LightShow lightShow(NUM_PIXELS, PIN_NEO_PIXEL, NEO_RGB + NEO_KHZ800);
+LightShow onBoard(NUM_ON_BOARD_PIXELS, PIN_ON_BOARD_PIXEL, NEO_RGB + NEO_KHZ800);
 
 static uint8_t adjust(uint8_t value) {
     return ((value * time_distr(gen)));
@@ -52,6 +63,8 @@ static uint8_t adjust(uint8_t value) {
 static uint8_t brightness(uint8_t value) {
     return ((value / time_distr(gen)));
 }
+
+bool isESP32C3();
 
 void taskLightshow(void *pvParameters);
 
@@ -65,19 +78,19 @@ void setup() {
     // This delay gives the chance to wait for a Serial Monitor without blocking if none is found
     delay(1500);
     lightShow.begin();
-    xTaskCreate(
-        taskLightshow
-        , "TaskLightshow"
-        , 4096
-        , NULL
-        , 1
-        , &taskHandleLightshow);
+    xTaskCreate(taskLightshow, "TaskLightshow", 4096, NULL, 1, &taskHandleLightshow);
     // Defined in thingProperties.h
     initProperties();
-
+    if (ESP.getChipModel() != ESP32_C3) {
+        onBoard.begin();
+        onBoard.solid(&RED, onBoardBr); // Red
+    } else {
+        printf("Chip Model: %s\n", ESP.getChipModel());
+        pinMode(8, OUTPUT);
+        digitalWrite(8, HIGH); // Turn on onboard LED
+    }
     // Connect to Arduino IoT Cloud
     ArduinoCloud.begin(ArduinoIoTPreferredConnection);
-
     /*
        The following function allows you to obtain more information
        related to the state of network and IoT Cloud connection and errors
@@ -92,6 +105,19 @@ void setup() {
 
 void loop() {
     ArduinoCloud.update();
+    if (ArduinoCloud.connected() != 0) {
+        if (isESP32C3()) {
+            digitalWrite(8, LOW);
+        } else if (onBoard.getPixels()->getPixelColor(0)
+                   != red)
+            onBoard.solid(&RED, onBoardBr); // Green
+    } else {
+        if (isESP32C3()) {
+            digitalWrite(8, HIGH);
+        } else if (onBoard.getPixels()->getPixelColor(0)
+                   != green)
+            onBoard.solid(&GREEN, onBoardBr);
+    }
 }
 
 
@@ -141,4 +167,8 @@ void onPwrSwitchChange() {
         // Turn off lights
         lightShow.clear();
     }
+}
+
+bool isESP32C3() {
+    return (ESP.getChipModel() == ESP32_C3);
 }
