@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "LightShow.h"
 #include "thingProperties.h"
+#include "utils.h"
 #include <esp_system.h>
 
 #define PIN_NEO_PIXEL  0     // The ESP32C3 pin that connects to NeoPixel
@@ -126,22 +127,38 @@ void taskLightshow(void *pvParameters) {
 
     while (1) {
         printf("Starting loop\n");
-        lightShow.solid(christmas, brightness);
-        vTaskDelay(60 * 1000);
-        lightShow.glowing(christmasColor(), CYCLEDELAY, adjust);
-        vTaskDelay(2000);
-        lightShow.sparkle(christmasColor(), 30, DELAY_INTERVAL);
-        vTaskDelay(2000);
-        lightShow.colorWipe(randomColor);
-        vTaskDelay(2000);
-        lightShow.theaterChase(christmasColor(), DELAY_INTERVAL);
-        vTaskDelay(2000);
-        lightShow.rainbow();
-        vTaskDelay(2000);
-        lightShow.rainbowChase();
-        vTaskDelay(2000);
-        lightShow.theaterChaseRainbow(DELAY_INTERVAL);
-        vTaskDelay(2000);
+        if(isBitSet(colourEffects,0)) {
+            lightShow.solid(christmas, brightness);
+            vTaskDelay(60 * 1000);
+        }
+        if(isBitSet(colourEffects, 1)) {
+            lightShow.glowing(christmasColor(), CYCLEDELAY, adjust);
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 2)) {
+            lightShow.sparkle(christmasColor(), 30, DELAY_INTERVAL);
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 3)) {
+            lightShow.colorWipe(randomColor);
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 4)) {
+            lightShow.theaterChase(christmasColor(), DELAY_INTERVAL);
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 5)) {
+            lightShow.rainbow();
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 6)) {
+            lightShow.rainbowChase();
+            vTaskDelay(2000);
+        }
+        if(isBitSet(colourEffects, 7)) {
+            lightShow.theaterChaseRainbow(DELAY_INTERVAL);
+            vTaskDelay(2000);
+        }
         printf("Ending loop\n");
     }
 }
@@ -167,6 +184,14 @@ void onPwrSwitchChange() {
         // Turn off lights
         lightShow.clear();
     }
+}
+
+/*
+  Since ColourEffects is READ_WRITE variable, onColourEffectsChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onColourEffectsChange()  {
+  printf("Updated colourEffects: %d\n", colourEffects);
 }
 
 bool isESP32C3() {

@@ -5,14 +5,17 @@
 #include "secrets.h"
 
 void onPwrSwitchChange();
+void onColourEffectsChange();
 
-bool pwrSwitch ;
+bool pwrSwitch;
+int colourEffects = 255;
 
 void initProperties(){
 
   ArduinoCloud.setBoardId(DEVICE_LOGIN_NAME);
   ArduinoCloud.setSecretDeviceKey(DEVICE_KEY);
   ArduinoCloud.addProperty(pwrSwitch, READWRITE, ON_CHANGE, onPwrSwitchChange);
+  ArduinoCloud.addProperty(colourEffects, READWRITE, ON_CHANGE, onColourEffectsChange, 1);
 }
 
 WiFiConnectionHandler ArduinoIoTPreferredConnection(SSID, PASS);
